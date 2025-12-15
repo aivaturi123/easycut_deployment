@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EasyCutAI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 0 15px;
+      position: relative;
+    }
+
+    #title {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    button {
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      margin-bottom: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      margin-top: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      position: relative;
+    }
+
+    #copyNote {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 0.8rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    #result .tag {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 2px; /* keeps it snug */
+    }
+
+    #result .citation {
+      margin-top: 0; /* no extra gap */
+      font-size: 14px;
+    }
+
+    #result .excerpt {
+      font-size: 7px;
+      margin-top: 10px;
+    }
+
+    #result .excerpt span {
+      font-size: 16px;
+      background-color: #66FFFF;
+      text-decoration: underline;
+      border: 1px solid #66FFFF;
+      padding: 1px 3px;
+      border-radius: 4px;
+      font-weight: normal;
+    }
+
+    .highlight-box {
+      font-weight: bold;
+      border: 1px solid black;
+      padding: 1px 3px;
+      border-radius: 3px;
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">EasyCutAI</h1>
+
+  <label for="url">Article URL:</label>
+  <input type="text" id="url" placeholder="Enter article URL" />
+
+  <label for="idea">Tag / Idea:</label>
+  <input type="text" id="idea" placeholder="Enter tag or idea" />
+
+  <button onclick="generateCard()">Generate Card</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function generateCard() {
+      const url = document.getElementById('url').value.trim();
+      const idea = document.getElementById('idea').value.trim();
+
+      if (!url || !idea) {
+        alert("Please enter both a URL and a tag/idea.");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/generate_card', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, idea })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          alert("Error: " + (errorData.detail || response.statusText));
+          return;
+        }
+
+        const data = await response.json();
+
+        const citationParts = data.citation.split('[');
+        const boldPart = citationParts[0].trim();
+        const restPart = citationParts[1] ? '[' + citationParts[1] : '';
+
+        document.getElementById('result').innerHTML = 
+          `<div id="copyNote">(Copy by highlighting & dragging over text)</div>
+           <div class="tag"><strong>${data.tag}</strong>.</div>
+           <div class="citation"><strong>${boldPart}</strong> ${restPart}</div>
+           <div class="excerpt">${data.excerpt}</div>`.trim();
+
+      } catch (err) {
+        alert("Failed to fetch from backend: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
