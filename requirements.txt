@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+newspaper3k
+nltk
+beautifulsoup4
+pydantic
