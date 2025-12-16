@@ -4,3 +4,5 @@ newspaper3k
 nltk
 beautifulsoup4
 pydantic
+lxml_html_clean
+
