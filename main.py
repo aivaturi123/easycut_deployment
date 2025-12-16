@@ -7,16 +7,23 @@ import nltk
 from datetime import datetime
 from bs4 import BeautifulSoup  # for fallback raw html parsing
 
-nltk.download('punkt')
+nltk.download('punkt', quiet = true)
 
 app = FastAPI()
 
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         "http://127.0.0.1:5500",
+#         "http://localhost:5500",
+#     ],
+#     allow_credentials=False,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-    ],
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -107,7 +114,7 @@ def generate_card(req: CardRequest):
     article = Article(url)
     article.download()
     article.parse()
-    article.nlp()
+    # article.nlp()
 
     text = get_full_text_with_fallback(article)
     text = clean_text(text)
@@ -123,3 +130,7 @@ def generate_card(req: CardRequest):
         "citation": citation,
         "excerpt": highlighted_excerpt
     }
+
+@app.get("/")
+def root():
+    return {"status": "ok"}
