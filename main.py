@@ -6,8 +6,13 @@ import re
 import nltk
 from datetime import datetime
 from bs4 import BeautifulSoup  # for fallback raw html parsing
+import nltk
 
-nltk.download('punkt', quiet = True)
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+
+
+
 
 app = FastAPI()
 
