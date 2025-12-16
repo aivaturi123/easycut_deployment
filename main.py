@@ -7,7 +7,7 @@ import nltk
 from datetime import datetime
 from bs4 import BeautifulSoup  # for fallback raw html parsing
 
-nltk.download('punkt', quiet = true)
+nltk.download('punkt', quiet = True)
 
 app = FastAPI()
 
